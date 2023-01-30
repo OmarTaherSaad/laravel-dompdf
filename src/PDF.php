@@ -123,6 +123,12 @@ class PDF
     public function loadView(string $view, array $data = [], array $mergeData = [], ?string $encoding = null): self
     {
         $html = $this->view->make($view, $data, $mergeData)->render();
+        $Arabic = new Arabic();
+        $p = $Arabic->arIdentify($html);
+        for ($i = count($p) - 1; $i >= 0; $i -= 2) {
+            $utf8ar = $Arabic->utf8Glyphs(substr($html, $p[$i - 1], $p[$i] - $p[$i - 1]));
+            $html   = substr_replace($html, $utf8ar, $p[$i - 1], $p[$i] - $p[$i - 1]);
+        }
         return $this->loadHTML($html, $encoding);
     }
 
@@ -179,7 +185,7 @@ class PDF
     {
         $disk = $disk ?: $this->config->get('dompdf.disk');
 
-        if (! is_null($disk)) {
+        if (!is_null($disk)) {
             Storage::disk($disk)->put($filename, $this->output());
             return $this;
         }
@@ -241,7 +247,7 @@ class PDF
     {
         $this->render();
         $canvas = $this->dompdf->getCanvas();
-        if (! $canvas instanceof CPDF) {
+        if (!$canvas instanceof CPDF) {
             throw new \RuntimeException('Encryption is only supported when using CPDF');
         }
         $canvas->get_cpdf()->setEncryption($password, $ownerpassword, $pc);
