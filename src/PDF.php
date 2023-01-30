@@ -11,6 +11,7 @@ use Illuminate\Contracts\View\Factory as ViewFactory;
 use Illuminate\Contracts\Config\Repository as ConfigRepository;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
+use ArPHP\I18N\Arabic;
 
 /**
  * A Laravel wrapper for Dompdf
